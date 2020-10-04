@@ -1,0 +1,180 @@
+   <!DOCTYPE html>
+   <html lang="en">
+   <head>
+        <!-- #region Sabio Code - You can Fold this region to remove it from sight -->
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="Sabio Coding Bootcamp" />
+        <meta itemprop="image" content="https://sabio.la/Sabio.png">
+        <link rel="shortcut icon" href="https://sabio.la/Sabio.png">
+        <link rel="icon" type="image/png" href="https://sabio.la/Sabio.png" />
+        
+        <!-- Do Not Change the HTML title or anything between this line and the line with the 💘's -->
+        <title>Home</title>
+        <link href="https://pw.sabio.la/dist/all-site.css" rel="stylesheet" />
+        <script src="https://pw.sabio.la/api/js/site"></script>
+        <script src="https://unpkg.com/axios@0.19.2/dist/axios.min.js"></script>
+        <script src="services/userServices.js"></script>
+        <script src='https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js'></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.css" rel='stylesheet'>
+
+        <!-- #endregion -->
+        <!-- I 💘 Code, You 💘 Code, We all 💘 Code -->
+
+        <!-- 💡 All your CSS in here -->
+        <style>
+            a {
+                margin:auto 15px;
+            }
+            #infoRow{
+                display:flexbox;
+                align-content: center;
+            }
+            div#newUserPage{
+                margin:20% 25%;
+                max-width: 75%;
+                vertical-align: middle;
+            }
+            div#newUserPage a{
+                margin-top: 25px;
+                margin:10% 10%;
+                
+
+            }
+            #welcomeMessage{
+                align-self: center;
+            }
+            #logOutButton{
+                display:inline-flex;
+                float:inline-end;
+                margin-top: 10px;;
+            }
+            #userInfoBoxLeft{
+                background-color: aqua;          
+                margin-top: auto;
+                border:1px solid black;
+            }
+            .jumbotron{
+                margin-top: 5%;
+            }
+        </style>
+    </head>
+
+    <body class="sabio" data-ins="pw-00">
+        <!-- Do Not Edit or Remove this nav element -->
+        <nav class="do-not-remove navbar d-none navbar-expand-md navbar-dark bg-dark sabio"></nav>
+        
+
+        <ul class='nav nav-tabs'>
+
+            <li class='nav-item'>
+                <a class='nav-link  active' href='Home.html'>Home</a>
+            </li>
+            <li class='nav-item'>
+                <a class='nav-link' href='Friends.html'>Friends</a>
+            </li>
+            <li class='nav-item'>
+                <a class='nav-link' href='Blogs.html'>Blogs</a>
+            </li>
+            <li class='nav-item'>
+                <a class='nav-link' href='Companies.html'>Tech Companies</a>
+            </li>
+            <li class='nav-item'>
+                <a class='nav-link' href='Jobs.html'>Jobs</a>
+            </li>
+            <li class='nav-item'>
+                <a class='nav-link' href='Events.html'>Events</a>
+            </li>
+            <li class='nav-item'>
+                <a class='nav-link' href='Register.html'>Register</a>
+            </li>
+        </ul>
+
+        <div class='container d-none' id='newUserPage'>
+            <div class='col-6' id='infoRow'>
+                <h5 id='welcomeMessage'>You are not logged in. Please log in or create an account.</h5>
+                <div class='container '>
+                    <a href='Register.html' class='btn btn-primary'>Register</a>
+                    <a href='Login.html' class='btn btn-primary'>Login</a> 
+                </div>
+            </div>
+
+        </div>
+
+      
+        <div class='d-none' id='loggedInPage'> 
+            <div class="jumbotron jumbotron-fluid">
+                <div class="container">
+                  <h1 class="display-4" id='helloUser'></h1>
+                  <br><br>
+                  <p class="lead">Not really much to see here, huh?</p>
+                </div>
+              </div>
+
+              <button class='float-right btn btn-primary d-none' id='logOutButton'>Logout</button>
+    
+        </div>
+        <!-- Do Not Edit or Remove this footer element -->
+        <footer class="do-not-remove container-fluid footer mx-auto  fb-targert sabio">
+            <p class="text-center">© Sabio.la 2019</p>
+        </footer>
+
+        <!--👇🏻 All your JavaScript code goes below here inside this script tag 👇🏻 -->
+        <script id="candidateCode">
+            function startUp(){
+                getStatus()
+                .then(onLoggedIn)
+                .catch(onNotLoggedIn)
+                wireUpHandlers();
+            }
+            function wireUpHandlers(){
+                $('#logOutButton').on('click',function(){
+                    logOutUser()
+                    .then(onLogOutSuccess)
+                    .catch(onLogOutError)
+                })
+            }
+            
+            function onLoggedIn(data){
+                //Show home page for Logged in Users
+                //Display welcome message that shows User's name
+                //Incorporate User's avatar
+                var userId = data.data.item.id
+
+                $('#loggedInPage').toggleClass('d-none');
+                $('#logOutButton').toggleClass('d-none')
+                
+                return getUser(userId)
+                .then(onGetUserSuccess)
+                .catch(onGetUserError)
+                
+            }
+
+            function onNotLoggedIn(){
+                function redirectNewUsers(){
+                    $('#newUserPage').toggleClass('d-none')                
+                                }
+                redirectNewUsers();
+            }
+
+           function onGetUserSuccess(data){
+            var userInfo = data.data.item
+            var userName = `${userInfo.firstName} ${userInfo.lastName}`;
+
+            $('#helloUser').text(`Welcome, ${userName}!`)
+           }
+           function onGetUserError(){
+            $('#helloUser').text('Welcome, User!');
+           }
+
+           function onLogOutSuccess(){
+                window.location.replace('Login.html')
+           }
+           function onLogOutError(){
+               return toastr['error']('Uh-oh, something went wrong!')
+           }
+        </script>
+        <!-- 🛑 Do Not Write Any Code Below here -->
+    </body>
+
+    </html>

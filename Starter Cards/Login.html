@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- #region Sabio Code - You can Fold this region to remove it from sight -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="Sabio Coding Bootcamp" />
+    <meta itemprop="image" content="https://sabio.la/Sabio.png">
+    <link rel="shortcut icon" href="https://sabio.la/Sabio.png">
+    <link rel="icon" type="image/png" href="https://sabio.la/Sabio.png" />
+    <!-- Do Not Change the HTML title or anything between this line and the line with the 💘's -->
+    <title>Login</title>
+    <link href="https://pw.sabio.la/dist/all-site.css" rel="stylesheet" />
+    <script src="https://pw.sabio.la/api/js/site"></script>
+    <script src="https://unpkg.com/axios@0.19.2/dist/axios.min.js"></script>
+    <script src="services/userServices.js "></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js'></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.css" rel='stylesheet'>
+
+    <!-- #endregion -->
+    <!-- I 💘 Code, You 💘 Code, We all 💘 Code -->
+
+    <!-- 💡 All your CSS in here -->
+    <style>
+        form {
+            margin-left: 25%;
+            margin-top: 10%;
+            padding:10px;
+        }
+
+        button {
+            margin-left: 10px
+        }
+    </style>
+</head>
+
+<body class="sabio" data-ins="pw-00">
+    <!-- Do Not Edit or Remove this nav element -->
+    <nav class="do-not-remove navbar d-none navbar-expand-md navbar-dark bg-dark sabio"></nav>
+
+    <ul class='nav nav-tabs'>
+
+        <li class='nav-item'>
+            <a class='nav-link active' href='Home.html'>Home</a>
+        </li>
+        <li class='nav-item'>
+            <a class='nav-link' href='Friends.html'>Friends</a>
+        </li>
+        <li class='nav-item'>
+            <a class='nav-link' href='Blogs.html'>Blogs</a>
+        </li>
+        <li class='nav-item'>
+            <a class='nav-link' href='Companies.html'>Tech Companies</a>
+        </li>
+        <li class='nav-item'>
+            <a class='nav-link' href='Jobs.html'>Jobs</a>
+        </li>
+        <li class='nav-item'>
+            <a class='nav-link' href='Events.html'>Events</a>
+        </li>
+        <li class='nav-item'>
+            <a class='nav-link' href='Register.html'>Register</a>
+        </li>
+    </ul>
+
+    <div class='container' id='loginForm'>
+       
+        <form>
+            <h5>Welcome, User! Please log in!</h5>
+            <br><br>
+            <div class='form-group col-4'>
+                <label for='userEmail'>Email Address</label>
+                <input type='email' class='form-control' id='userEmail'>
+            </div>
+            <div class='form-group col-4'>
+                <label for="password">Password</label>
+                <input type='password' class='form-control' id='password'>
+            </div>
+            <button type='submit' class='btn btn-primary' id='submitButton'>Login</button>
+            <a href='Register.html' class='btn btn-primary'>Register</a>
+        </form>
+    </div>
+    <div class='jumbotron d-none' id='redirectMsg'>
+        <h5>Looks like you're already logged in!</h5>
+        <h4>Redirecting to Home page...</h4>
+    </div>>
+
+    <!-- Do Not Edit or Remove this footer element -->
+    <footer class="do-not-remove container-fluid footer mx-auto  fb-targert sabio">
+        <p class="text-center">© Sabio.la 2019</p>
+    </footer>
+
+    <!--👇🏻 All your JavaScript code goes below here inside this script tag 👇🏻 -->
+    <script id="candidateCode">
+        function startUp() {
+            wireUpHandlers();
+            getStatus().then(onLoggedIn).catch(onNotLoggedIn)
+
+        }
+        function wireUpHandlers() {
+            $('#submitButton').on('click', submitInfo)
+                    }
+        function submitInfo(e) {
+            e.preventDefault();
+            let payload = {
+                'email': $('#userEmail').val(),
+                'password': $('#password').val(),
+                'tenantId': 'U012YNYNGAW'
+            }
+
+            return logIn(payload).then(onLoginSuccess).catch(onLoginError)
+
+        }
+
+        function onLoginSuccess() {
+            window.location.replace('Home.html')
+
+        }
+        function onLoginError() {
+            console.log("login failed")
+            return toastr['error']('Login Attempt Failed. Bad username or password. ')
+        }
+
+        function onLoggedIn(){
+            $('#loginForm').toggleClass('d-none');
+            $('#redirectMsg').toggleClass('d-none');
+
+            setTimeout(redirectUser,3000)
+             function redirectUser(){
+                window.location.replace('Home.html')
+             }
+        }
+        function onNotLoggedIn(){
+            return;
+        }
+
+    </script>
+    <!-- 🛑 Do Not Write Any Code Below here -->
+</body>
+
+</html>

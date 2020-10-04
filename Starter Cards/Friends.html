@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- #region Sabio Code - You can Fold this region to remove it from sight -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="Sabio Coding Bootcamp" />
+    <meta itemprop="image" content="https://sabio.la/Sabio.png">
+    <link rel="shortcut icon" href="https://sabio.la/Sabio.png">
+    <link rel="icon" type="image/png" href="https://sabio.la/Sabio.png" />
+    <!-- Do Not Change the HTML title or anything between this line and the line with the 💘's -->
+    <title>PW Execise Template</title>
+    <link href="https://pw.sabio.la/dist/all-site.css" rel="stylesheet" />
+    <script src="https://pw.sabio.la/api/js/site"></script>
+    <script src="https://unpkg.com/axios@0.19.2/dist/axios.min.js"></script>
+    <script src='services/friendsServices.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js'></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.css" rel='stylesheet'>
+    <!-- #endregion -->
+    <!-- I 💘 Code, You 💘 Code, We all 💘 Code -->
+
+    <!-- 💡 All your CSS in here -->
+    <style>
+        .card {
+            height: 500px;
+            width: 300px;
+            display: inline-flex;
+            margin: 10px 10px;
+
+        }
+
+        .card img {
+            height: 300px;
+            width: 300px;
+            object-fit: cover;
+        }
+
+        .card button {
+            max-width: 100px;
+            display: inline-flex;
+            margin-bottom: 7.5%;
+        }
+
+        .editButton {
+            float: inline-start;
+            margin-right: 50%;
+        }
+
+        .deleteButton {
+            float: inline-end;
+        }
+        #searchTools{
+            margin-top:-30px;
+            margin-left:100%;
+            float:right;
+            
+        }
+        #editFormContainer form{
+            margin-left:5%
+        }
+        .jumbotron{
+            margin-top: 5%;
+        }
+    </style>
+</head>
+
+<body class="sabio" data-ins="pw-00">
+    <!-- Do Not Edit or Remove this nav element -->
+    <nav class="do-not-remove d-none navbar navbar-expand-md navbar-dark bg-dark sabio"></nav>
+    <!--NAV BAR-->
+    <ul class='nav nav-tabs'>
+
+        <li class='nav-item'>
+            <a class='nav-link' href='Home.html'>Home</a>
+        </li>
+        <li class='nav-item'>
+            <a class='nav-link active' href='Friends.html'>Friends</a>
+        </li>
+        <li class='nav-item'>
+            <a class='nav-link' href='Blogs.html'>Blogs</a>
+        </li>
+        <li class='nav-item'>
+            <a class='nav-link' href='Companies.html'>Tech Companies</a>
+        </li>
+        <li class='nav-item'>
+            <a class='nav-link' href='Jobs.html'>Jobs</a>
+        </li>
+        <li class='nav-item'>
+            <a class='nav-link' href='Events.html'>Events</a>
+        </li>
+        <li class='nav-item'>
+            <a class='nav-link' href='Register.html'>Register</a>
+        </li>
+    </ul>
+    <!--ADD/SHOW FRIENDS BUTTONS-->
+    <button type='button' class='btn btn-primary' style='margin-top:10px; margin-left:15px;' id='showHideFriends'>Friends</button>
+    <button type='button' class='btn btn-info' id="showAddForm" style='margin-top:10px; margin-left:15px;'>Add A Friend</button>
+    
+    <!--SEARCH-->
+    <div class='container' id='searchTools'>
+        <input type='text' id='searchBox'>
+        <button type='submit' class='btn btn-primary' id='searchButton'>Search Friends</button>
+    </div>
+    <!--FRIENDS DEFAULT VIEW-->
+    <div class='container hideOnEdit hideOnSearch' id='showFriendsContainer'>
+        <div class='row' id='cardContainer'></div>
+    </div>
+    <!--ADD FRIEND FORM-->
+    <div class='container d-none hideOnEdit hideOnSearch' id='addFormContainer'>
+        <div class='jumbotron'>ADD A FRIEND</div>
+        <div class='row'>
+            <form>
+                <div class='form-group'>
+                    <label for='name'>Full Name</label>
+                    <input type='text' class='form-control' id='newFriendName'>
+                </div>
+                <div class='form-group'>
+                    <label for='bio'>Bio</label>
+                    <input type='text' class='form-control' id='newFriendBio'>
+                </div>
+                <div class='form-group'>
+                    <label for='summary'>Summary</label>
+                    <input type='text' class='form-control' id='newFriendSummary'>
+                </div>
+                <div class='form-group'>
+                    <label for='headline'>Headline</label>
+                    <input type='text' class='form-control' id='newFriendHeadline'>
+                </div>
+                <div class='form-group'>
+                    <label for='avatar'>Avatar Url</label>
+                    <input type='text' class='form-control' id='newFriendAvatar'>
+                </div>
+                <button type='submit' id='submitFriend' class='btn btn-info'>Submit</button>
+                
+
+            </form>
+        </div>
+    </div>
+
+    <!--EDIT FRIEND FORM-->
+    <div class='container d-none hideOnSearch' id='editFormContainer'>
+        <div class='jumbotron'>UPDATE A FRIEND</div>
+        <div class='row'>
+            <form>
+                <div class='form-group'>
+                    <label for='name'>Full Name</label>
+                    <input type='text' class='form-control' id='editName'>
+                </div>
+                <div class='form-group'>
+                    <label for='bio'>Bio</label>
+                    <input type='text' class='form-control' id='editBio'>
+                </div>
+                <div class='form-group'>
+                    <label for='summary'>Summary</label>
+                    <input type='text' class='form-control' id='editSummary'>
+                </div>
+                <div class='form-group'>
+                    <label for='headline'>Headline</label>
+                    <input type='text' class='form-control' id='editHeadline'>
+                </div>
+                <div class='form-group'>
+                    <label for='avatar'>Avatar Url</label>
+                    <input type='text' class='form-control' id='editAvatar'>
+                </div>
+                <button type='submit' id='updateFriend' class='btn btn-success'>Update</button>
+                <p class='d-none' id='idBox'></p>
+                <p class='d-none' id='slugBox'></p>
+
+            </form>
+        </div>
+    </div>
+    <!--SEARCH RESULTS-->
+    <div class='container d-none hideOnEdit' id='filteredFriendsContainer'>
+        <div class='jumbotron'>Search Results</div>
+        <div class='row' id='filteredCardContainer'></div>
+    </div>
+
+    <!-- Do Not Edit or Remove this footer element -->
+    <footer class="do-not-remove container-fluid footer mx-auto  fb-targert sabio">
+        <p class="text-center">© Sabio.la 2019</p>
+    </footer>
+
+    <!--👇🏻 All your JavaScript code goes below here inside this script tag 👇🏻 -->
+    <script id="candidateCode">
+        function startUp() {
+            getFriends(0, 10)
+            //Populates page with Friend Cards (unfiltered) on load
+                .then(onGetFriendsSuccess)
+                .catch(onGetFriendsError)
+            wireUpHandlers();
+        }
+
+        function wireUpHandlers() {
+            //Delete and Edit button event handlers (default list)
+            $('#cardContainer').on('click', 'button.deleteButton', deleteFriend);
+            $('#cardContainer').on('click','button.editButton',editFriend)
+            //Delete and Edit button event handlers (filtered list)
+            $('#filteredFriendsContainer').on('click', 'button.deleteButton', deleteFriend);
+            $('#filteredFriendsContainer').on('click','button.editButton',editFriend)
+            //Send add friend data to Ajax call
+            $('#submitFriend').on('click',submitNewFriend);
+            //Returns user to default friends view
+            $('#showHideFriends').on('click',cycleFriendsDisplay)
+            //Show Add Friend Form
+            $('#showAddForm').on('click',showAddForm)
+            //Show Update Friend Form
+            $('#updateFriend').on('click',sendUpdate)
+            //Submits search term to Ajax call
+            $('#searchButton').on('click',searchFriends)
+        }
+        //Callbacks for GET request made on StartUp
+        function onGetFriendsSuccess(data) {
+            var friendsArr = data.data.item.pagedItems;
+            renderFriends(friendsArr);
+        }
+        function onGetFriendsError(response) {
+            console.log(response)
+        }
+        //SEARCH
+        function searchFriends(e){
+            e.preventDefault();
+
+            var searchString = $('#searchBox').val();
+
+            return findFriend(searchString)
+            .then(onSearchSuccess)
+            .catch(onSearchError)
+
+        }
+        function onSearchSuccess(data){
+            var foundFriends = data.data.item.pagedItems;
+            
+            $('.hideOnSearch').addClass('d-none');
+            $('#filteredFriendsContainer').removeClass('d-none');
+            $('#searchBox').val('')
+
+            $('#searchTools').addClass('d-none');
+
+            return renderFoundFriends(foundFriends);
+
+        }
+        function onSearchError(response){
+            toastr['error']('Nothing found.');
+            $('#searchBox').val('')
+        }
+        //Returns to Default Friends View
+        function cycleFriendsDisplay(e){
+            e.preventDefault();
+
+            if($('#showFriendsContainer').hasClass('d-none')){
+                window.location.replace('Friends.html')
+            };
+
+
+            if(!$('#addFormContainer').hasClass('d-none')){
+                $('#addFormContainer').toggleClass('d-none')
+            }
+            
+        }
+        //ADD FRIEND FUNCTION BLOCK
+        function showAddForm(){
+
+            if($('#addFormContainer').hasClass('d-none')){
+                $('#addFormContainer').toggleClass('d-none')
+            }
+            else{
+                window.location.replace('Friends.html')
+            }
+            
+
+            if(!$('#showFriendsContainer').hasClass('d-none')){
+                $('#showFriendsContainer').addClass('d-none')
+            }
+            
+            if(!$('#editFormContainer').hasClass('d-none')){
+                $('#editFormContainer').addClass('d-none')
+            }
+
+            
+        }
+        function getSlug(string){
+            var splitName = string.split(' ');
+            var firstInitial = splitName[0][0].toLowerCase();
+            var lastNameIndex = splitName.length-1;
+            var lastName = splitName[lastNameIndex];
+            var slug = firstInitial + lastName;
+            return slug; 
+        }
+        function submitNewFriend(e){
+            e.preventDefault()
+
+            var name = $('#newFriendName').val();
+            var sluggedName = getSlug(name);
+            var randNum = Math.floor(Math.random()*1000)
+            var generatedSlug = `${sluggedName}${randNum}`;
+
+            let result = {
+                'title':$('#newFriendName').val(),
+                'bio':$('#newFriendBio').val(),
+                'summary':$('#newFriendSummary').val(),
+                'headline':$('#newFriendHeadline').val(),
+                'slug':generatedSlug,
+                'statusId':1,
+                'primaryImage':$('#newFriendAvatar').val()
+            }
+
+            return addFriend(result)
+            .then(onAddFriendSuccess)
+            .catch(onAddFriendError)
+        }
+        function onAddFriendSuccess(){
+            toastr['success']('Friend added!')
+
+            window.location.replace('Friends.html')
+                
+
+
+        }
+        function onAddFriendError(){
+            toastr['error']('Something went wrong. Please check your data and try again!')
+        }  
+        //UPDATE FRIEND FUNCTION BLOCK
+        function editFriend(e){
+            $('.hideOnEdit').addClass('d-none');
+            $('#editFormContainer').toggleClass('d-none');
+            var thisCardId = $(this).closest('.card').attr('data-friend-id')
+            
+            return getFriend(thisCardId)
+                .then(onGetFriendSuccess)
+                .catch(onGetFriendError)
+        }
+        function onGetFriendSuccess(data){
+            var person = data.data.item
+            var updateId = person.id
+            $('#editName').val(person.title);
+            $('#editBio').val(person.bio);
+            $('#editSummary').val(person.summary)
+            $('#editHeadline').val(person.headline)
+            $('#editAvatar').val(person.primaryImage.imageUrl)
+            $('#idBox').text(updateId);
+            $('#slugBox').text(person.slug)
+            return;
+        }
+        function onGetFriendError(){
+            toastr['error']('Something went wrong. Please try again.')
+        }
+        function sendUpdate(e){
+            e.preventDefault();
+            let id = Number($('#idBox').text())
+            let result = {
+                'id':id,
+                'title':$('#editName').val(),
+                'bio':$('#editBio').val(),
+                'summary':$('#editSummary').val(),
+                'headline':$('#editSummary').val(),
+                'slug':$('#slugBox').text(),
+                'statusId':1,
+                'primaryImage':$('#editAvatar').val()
+            }
+            return updateFriend(id,result)
+                .then(onUpdateSuccess)
+                .catch(onUpdateError)
+        }
+        function onUpdateSuccess(){
+            toastr['success']('Friend updated!')
+            toastr['info']('You will now be redirected to your Friends page.')
+
+            setTimeout(redirectUser,3000)
+             function redirectUser(){
+                window.location.replace('Friends.html')
+             }
+        }
+        function onUpdateError(){}
+       //RENDER FRIENDS FUNCTION BLOCK
+        function getTemplate() {
+
+            var htmlFromCloneTarget = $('#cardTemplate').html();
+            var jQ = $(htmlFromCloneTarget);
+
+            jQ.removeAttr("id");
+
+            return jQ;
+        }
+        function mapFriend(friend) {
+            var template = getTemplate();
+            var avatar = template.find('.card-img-top');
+            var friendName = friend.title;
+            var friendSummary = friend.summary;
+            var friendBio = friend.bio;
+
+            template.find('.card-title').text(friendName);
+            template.find('.card-text').text(friendSummary)
+            
+            avatar.attr('src', friend.primaryImage.imageUrl)
+            avatar.attr('alt', friend.headline)
+            template.attr('data-friend-Id', friend.id)
+
+            return template;
+        }
+        //Render default list of friends
+        function renderFriends(arrayOfData) {
+            //mapSingleItem is missing. you need to write that function
+            let arrayofJqTemplates = arrayOfData.map(mapFriend);
+            $("#cardContainer").append(arrayofJqTemplates);
+        }
+        //Render friends returned by search
+        function renderFoundFriends(arrayOfData) {
+            //mapSingleItem is missing. you need to write that function
+            let arrayofJqTemplates = arrayOfData.map(mapFriend);
+            $("#filteredCardContainer").append(arrayofJqTemplates);
+        }
+        //DELETE FRIEND FUNCTION BLOCK
+        function deleteFriend(e) {
+            e.preventDefault()
+            var thisFriend = $(this).closest('.card');
+            var thisFriendId = thisFriend.attr('data-friend-id')
+            removeFriend(thisFriendId)
+                .then(onRemoveSuccess)
+                .catch(onRemoveError)
+        }
+        function onRemoveSuccess(id) {
+            toastr['success']('Friend successfully removed')
+        }
+        function onRemoveError() {
+            return toastr['error']('Something went wrong, please try that again')
+        }
+
+
+    </script>
+
+    <script type='text/html' id='cardTemplate'>
+
+                  <div class="card border-info" >
+                    <img src="${primaryImage.imageUrl}" class="card-img-top img-thumbnail " alt="${title}">
+                    <div class="card-body">
+                      <h5 class="card-title">${Title}</h5>
+                      <p class="card-text">${Summary}</p>
+                    </div>
+                    <div class='container'> 
+                    <button class='btn btn-primary editButton'>Edit</button>
+                    <button class='btn btn-danger deleteButton'>Delete</button>
+                    </div>
+                  
+        </script>
+    <!-- 🛑 Do Not Write Any Code Below here -->
+</body>
+
+</html>
