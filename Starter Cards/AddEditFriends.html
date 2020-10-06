@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- #region Sabio Code - You can Fold this region to remove it from sight -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="Sabio Coding Bootcamp" />
+    <meta itemprop="image" content="https://sabio.la/Sabio.png">
+    <link rel="shortcut icon" href="https://sabio.la/Sabio.png">
+    <link rel="icon" type="image/png" href="https://sabio.la/Sabio.png" />
+    <!-- Do Not Change the HTML title or anything between this line and the line with the 💘's -->
+    <title>PW Execise Template</title>
+    <link href="https://pw.sabio.la/dist/all-site.css" rel="stylesheet" />
+    <script src="https://pw.sabio.la/api/js/site"></script>
+    <script src="https://unpkg.com/axios@0.19.2/dist/axios.min.js"></script>
+    <script src='services/friendsServices.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js'></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.css" rel='stylesheet'>
+    <!-- #endregion -->
+    <!-- I 💘 Code, You 💘 Code, We all 💘 Code -->
+
+    <!-- 💡 All your CSS in here -->
+    <style>
+        .card {
+            height: 500px;
+            width: 300px;
+            display: inline-flex;
+            margin: 10px 10px;
+
+        }
+
+        .card img {
+            height: 300px;
+            width: 300px;
+            object-fit: cover;
+        }
+
+        .card button {
+            max-width: 100px;
+            display: inline-flex;
+            margin-bottom: 7.5%;
+        }
+
+        .editButton {
+            float: inline-start;
+            margin-right: 50%;
+        }
+
+        .deleteButton {
+            float: inline-end;
+        }
+
+        #searchTools {
+            margin-top: -30px;
+            margin-left: 100%;
+            float: right;
+
+        }
+
+        #editFormContainer form {
+            margin-left: 5%
+        }
+
+        .jumbotron {
+            margin-top: 5%;
+        }
+    </style>
+</head>
+
+<body class="sabio" data-ins="pw-00">
+    <!-- Do Not Edit or Remove this nav element -->
+    <nav class="do-not-remove d-none navbar navbar-expand-md navbar-dark bg-dark sabio"></nav>
+    <!--NAV BAR-->
+    <ul class='nav nav-tabs'>
+
+        <li class='nav-item'>
+            <a class='nav-link' href='Home.html'>Home</a>
+        </li>
+        <li class='nav-item'>
+            <a class='nav-link active' href='Friends.html'>Friends</a>
+        </li>
+        <li class='nav-item'>
+            <a class='nav-link' href='Blogs.html'>Blogs</a>
+        </li>
+        <li class='nav-item'>
+            <a class='nav-link' href='Companies.html'>Tech Companies</a>
+        </li>
+        <li class='nav-item'>
+            <a class='nav-link' href='Jobs.html'>Jobs</a>
+        </li>
+        <li class='nav-item'>
+            <a class='nav-link' href='Events.html'>Events</a>
+        </li>
+        <li class='nav-item'>
+            <a class='nav-link' href='Register.html'>Register</a>
+        </li>
+    </ul>
+    <!--ADD/SHOW FRIENDS BUTTONS-->
+    <button type='button' class='btn btn-primary' style='margin-top:10px; margin-left:15px;'
+        id='showHideFriends'>Friends</button>
+    <button type='button' class='btn btn-info' id="backButton" style='margin-top:10px; margin-left:15px;'>Back to
+        Friends...</button>
+
+    <!--SEARCH-->
+    <div class='container' id='searchTools'>
+        <input type='text' id='searchBox'>
+        <button type='submit' class='btn btn-primary' id='searchButton'>Search Friends</button>
+    </div>
+    <!--ADD FRIEND FORM-->
+    <div class='container hideOnEdit hideOnSearch' id='addFormContainer'>
+        <div class='jumbotron'>ADD A FRIEND</div>
+        <div class='row'>
+            <form>
+                <div class='form-group'>
+                    <label for='name'>Full Name</label>
+                    <input type='text' class='form-control' id='newFriendName'>
+                </div>
+                <div class='form-group'>
+                    <label for='bio'>Bio</label>
+                    <input type='text' class='form-control' id='newFriendBio'>
+                </div>
+                <div class='form-group'>
+                    <label for='summary'>Summary</label>
+                    <input type='text' class='form-control' id='newFriendSummary'>
+                </div>
+                <div class='form-group'>
+                    <label for='headline'>Headline</label>
+                    <input type='text' class='form-control' id='newFriendHeadline'>
+                </div>
+                <div class='form-group'>
+                    <label for='avatar'>Avatar Url</label>
+                    <input type='text' class='form-control' id='newFriendAvatar'>
+                </div>
+                <button type='submit' id='submitButton' class='btn btn-info d-none'>Submit</button>
+                <button type='submit' id='updateButton' class='btn btn-warning d-none'>Update</button>
+
+
+
+            </form>
+        </div>
+    </div>
+
+
+
+
+
+    <!-- Do Not Edit or Remove this footer element -->
+    <footer class="do-not-remove container-fluid footer mx-auto  fb-targert sabio">
+        <p class="text-center">© Sabio.la 2019</p>
+    </footer>
+
+    <!--👇🏻 All your JavaScript code goes below here inside this script tag 👇🏻 -->
+    <script id="candidateCode">
+        function startUp() {
+            wireUpHandlers();
+            checkEdit();
+        }
+
+        function wireUpHandlers() {
+
+            //Send add friend data to Ajax call
+            $('#submitButton').on('click', submitNewFriend);
+            //Returns user to default friends view
+            $('#backButton').on('click', function () { window.location.replace('Friends.html') })
+            //Show Update Friend Form
+            $('#updateFriend').on('click', sendUpdate)
+            //Submits search term to Ajax call
+            $('#searchButton').on('click', searchFriends)
+        }
+
+        //SEARCH
+        function searchFriends(e) {
+            e.preventDefault();
+
+            var searchString = $('#searchBox').val();
+            window.location.replace(`Friends.html?searchString=${searchString}`)
+
+        }
+        function getSlug(string) {
+            var splitName = string.split(' ');
+            var firstInitial = splitName[0][0].toLowerCase();
+            var lastNameIndex = splitName.length - 1;
+            var lastName = splitName[lastNameIndex];
+            var slug = firstInitial + lastName;
+            return slug;
+        }
+        function submitNewFriend(e) {
+            e.preventDefault()
+
+            var name = $('#newFriendName').val();
+            var sluggedName = getSlug(name);
+            var randNum = Math.floor(Math.random() * 1000)
+            var generatedSlug = `${sluggedName}${randNum}`;
+
+            let result = {
+                'title': $('#newFriendName').val(),
+                'bio': $('#newFriendBio').val(),
+                'summary': $('#newFriendSummary').val(),
+                'headline': $('#newFriendHeadline').val(),
+                'slug': generatedSlug,
+                'statusId': 1,
+                'primaryImage': $('#newFriendAvatar').val()
+            }
+
+            return addFriend(result)
+                .then(onAddFriendSuccess)
+                .catch(onAddFriendError)
+        }
+        function onAddFriendSuccess() {
+            toastr['success']('Friend added!')
+
+            window.location.replace('Friends.html')
+
+
+
+        }
+        function onAddFriendError() {
+            toastr['error']('Something went wrong. Please check your data and try again!')
+        }
+        //UPDATE FRIEND FUNCTION BLOCK
+        function editFriend() {
+            var editId = window.location.search.split('=')[1];
+            return getFriend(editId)
+                .then(onGetFriendSuccess)
+                .catch(onGetFriendError)
+
+
+        }
+        function onGetFriendSuccess(data) {
+            console.log(data)
+            var person = data.data.item;
+            console.log(person)
+            var updateId = person.id
+            $('#newFriendName').val(person.title);
+            $('#newFriendBio').val(person.bio);
+            $('#newFriendSummary').val(person.summary)
+            $('#newFriendHeadline').val(person.headline)
+            $('#newFriendAvatar').val(person.primaryImage.imageUrl)
+            $('#addForm').attr('data-edit-id', person.id)
+            $('#addForm').attr('data-edit-slug', person.slug)
+
+            return;
+        }
+        function onGetFriendError() {
+            toastr['error']('Something went wrong. Please try again.')
+        }
+        function sendUpdate(e) {
+            e.preventDefault();
+            let id = Number($('#addForm').attr('data-edit-id'))
+            let slug = $('#addForm').attr('data-edit.slug')
+            let result = {
+                'id': id,
+                'title': $('#editName').val(),
+                'bio': $('#editBio').val(),
+                'summary': $('#editSummary').val(),
+                'headline': $('#editSummary').val(),
+                'slug': slug,
+                'statusId': 1,
+                'primaryImage': $('#editAvatar').val()
+            }
+            console.log(result)
+            // return updateFriend(id, result)
+            //     .then(onUpdateSuccess)
+            //     .catch(onUpdateError)
+        }
+        function onUpdateSuccess() {
+            toastr['success']('Friend updated!')
+            toastr['info']('You will now be redirected to your Friends page.')
+
+            setTimeout(redirectUser, 3000)
+            function redirectUser() {
+                window.location.replace('Friends.html')
+            }
+        }
+        function onUpdateError() { }
+        function checkEdit() {
+            if (window.location.search) {
+                //Edit page from redirect. Show Update button to edit job
+                $('#updateButton').toggleClass('d-none')
+                editFriend();
+            } else {
+                //Page not redirected. Show Submit button to add job
+                $('#submitButton').toggleClass('d-none');
+
+            }
+        }
+
+
+    </script>
+
+
+    <!-- 🛑 Do Not Write Any Code Below here -->
+</body>
+
+</html>

@@ -26,7 +26,7 @@
         form {
             margin-left: 25%;
             margin-top: 10%;
-            padding:10px;
+            padding: 10px;
         }
 
         button {
@@ -65,7 +65,7 @@
     </ul>
 
     <div class='container' id='loginForm'>
-       
+
         <form>
             <h5>Welcome, User! Please log in!</h5>
             <br><br>
@@ -100,7 +100,7 @@
         }
         function wireUpHandlers() {
             $('#submitButton').on('click', submitInfo)
-                    }
+        }
         function submitInfo(e) {
             e.preventDefault();
             let payload = {
@@ -117,21 +117,21 @@
             window.location.replace('Home.html')
 
         }
-        function onLoginError() {
+        function onLoginError(response) {
             console.log("login failed")
-            return toastr['error']('Login Attempt Failed. Bad username or password. ')
+            return toastr['error']('Login Attempt Failed. Bad username and/or password. ')
         }
 
-        function onLoggedIn(){
+        function onLoggedIn() {
             $('#loginForm').toggleClass('d-none');
             $('#redirectMsg').toggleClass('d-none');
 
-            setTimeout(redirectUser,3000)
-             function redirectUser(){
+            setTimeout(redirectUser, 3000)
+            function redirectUser() {
                 window.location.replace('Home.html')
-             }
+            }
         }
-        function onNotLoggedIn(){
+        function onNotLoggedIn() {
             return;
         }
 

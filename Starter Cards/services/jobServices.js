@@ -45,7 +45,7 @@ let getJobById = (id) => {
 let findJob = (searchString) => {
   const config = {
     method: "GET",
-    url: endpoint + `search?pageIndex=0&pageSize=10&q=${searchString}`,
+    url: endpoint + `search?pageIndex=0&pageSize=10&searchTerm=${searchString}`,
     crossdomain: true,
     headers: { "content-Type": "application/json" },
   };
@@ -59,5 +59,7 @@ let updateJobStatus = (id, statusId) => {
     crossdomain: true,
     headers: { "content-Type": "application/json" },
   };
-  return axios(config);
+  return axios(config).then(function (response) {
+    return id;
+  });
 };

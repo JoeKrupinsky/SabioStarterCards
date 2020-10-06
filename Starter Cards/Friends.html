@@ -50,16 +50,19 @@
         .deleteButton {
             float: inline-end;
         }
-        #searchTools{
-            margin-top:-30px;
-            margin-left:100%;
-            float:right;
-            
+
+        #searchTools {
+            margin-top: -30px;
+            margin-left: 100%;
+            float: right;
+
         }
-        #editFormContainer form{
-            margin-left:5%
+
+        #editFormContainer form {
+            margin-left: 5%
         }
-        .jumbotron{
+
+        .jumbotron {
             margin-top: 5%;
         }
     </style>
@@ -94,9 +97,11 @@
         </li>
     </ul>
     <!--ADD/SHOW FRIENDS BUTTONS-->
-    <button type='button' class='btn btn-primary' style='margin-top:10px; margin-left:15px;' id='showHideFriends'>Friends</button>
-    <button type='button' class='btn btn-info' id="showAddForm" style='margin-top:10px; margin-left:15px;'>Add A Friend</button>
-    
+    <button type='button' class='btn btn-primary' style='margin-top:10px; margin-left:15px;'
+        id='showHideFriends'>Friends</button>
+    <button type='button' class='btn btn-info' id="addButton" style='margin-top:10px; margin-left:15px;'>Add A
+        Friend</button>
+
     <!--SEARCH-->
     <div class='container' id='searchTools'>
         <input type='text' id='searchBox'>
@@ -132,7 +137,7 @@
                     <input type='text' class='form-control' id='newFriendAvatar'>
                 </div>
                 <button type='submit' id='submitFriend' class='btn btn-info'>Submit</button>
-                
+
 
             </form>
         </div>
@@ -185,7 +190,7 @@
     <script id="candidateCode">
         function startUp() {
             getFriends(0, 10)
-            //Populates page with Friend Cards (unfiltered) on load
+                //Populates page with Friend Cards (unfiltered) on load
                 .then(onGetFriendsSuccess)
                 .catch(onGetFriendsError)
             wireUpHandlers();
@@ -194,20 +199,19 @@
         function wireUpHandlers() {
             //Delete and Edit button event handlers (default list)
             $('#cardContainer').on('click', 'button.deleteButton', deleteFriend);
-            $('#cardContainer').on('click','button.editButton',editFriend)
+            $('#cardContainer').on('click', 'button.editButton', editFriend)
             //Delete and Edit button event handlers (filtered list)
             $('#filteredFriendsContainer').on('click', 'button.deleteButton', deleteFriend);
-            $('#filteredFriendsContainer').on('click','button.editButton',editFriend)
-            //Send add friend data to Ajax call
-            $('#submitFriend').on('click',submitNewFriend);
+            $('#filteredFriendsContainer').on('click', 'button.editButton', editFriend)
+
             //Returns user to default friends view
-            $('#showHideFriends').on('click',cycleFriendsDisplay)
+            $('#showHideFriends').on('click', cycleFriendsDisplay)
             //Show Add Friend Form
-            $('#showAddForm').on('click',showAddForm)
+            $('#addButton').on('click', function () { window.location.replace('AddEditFriends.html') })
             //Show Update Friend Form
-            $('#updateFriend').on('click',sendUpdate)
+            $('#updateFriend').on('click', sendUpdate)
             //Submits search term to Ajax call
-            $('#searchButton').on('click',searchFriends)
+            $('#searchButton').on('click', searchFriends)
         }
         //Callbacks for GET request made on StartUp
         function onGetFriendsSuccess(data) {
@@ -218,19 +222,19 @@
             console.log(response)
         }
         //SEARCH
-        function searchFriends(e){
+        function searchFriends(e) {
             e.preventDefault();
 
             var searchString = $('#searchBox').val();
 
             return findFriend(searchString)
-            .then(onSearchSuccess)
-            .catch(onSearchError)
+                .then(onSearchSuccess)
+                .catch(onSearchError)
 
         }
-        function onSearchSuccess(data){
+        function onSearchSuccess(data) {
             var foundFriends = data.data.item.pagedItems;
-            
+
             $('.hideOnSearch').addClass('d-none');
             $('#filteredFriendsContainer').removeClass('d-none');
             $('#searchBox').val('')
@@ -240,97 +244,33 @@
             return renderFoundFriends(foundFriends);
 
         }
-        function onSearchError(response){
+        function onSearchError(response) {
             toastr['error']('Nothing found.');
             $('#searchBox').val('')
         }
         //Returns to Default Friends View
-        function cycleFriendsDisplay(e){
+        function cycleFriendsDisplay(e) {
             e.preventDefault();
 
-            if($('#showFriendsContainer').hasClass('d-none')){
+            if ($('#showFriendsContainer').hasClass('d-none')) {
                 window.location.replace('Friends.html')
             };
 
 
-            if(!$('#addFormContainer').hasClass('d-none')){
+            if (!$('#addFormContainer').hasClass('d-none')) {
                 $('#addFormContainer').toggleClass('d-none')
             }
-            
-        }
-        //ADD FRIEND FUNCTION BLOCK
-        function showAddForm(){
-
-            if($('#addFormContainer').hasClass('d-none')){
-                $('#addFormContainer').toggleClass('d-none')
-            }
-            else{
-                window.location.replace('Friends.html')
-            }
-            
-
-            if(!$('#showFriendsContainer').hasClass('d-none')){
-                $('#showFriendsContainer').addClass('d-none')
-            }
-            
-            if(!$('#editFormContainer').hasClass('d-none')){
-                $('#editFormContainer').addClass('d-none')
-            }
-
-            
-        }
-        function getSlug(string){
-            var splitName = string.split(' ');
-            var firstInitial = splitName[0][0].toLowerCase();
-            var lastNameIndex = splitName.length-1;
-            var lastName = splitName[lastNameIndex];
-            var slug = firstInitial + lastName;
-            return slug; 
-        }
-        function submitNewFriend(e){
-            e.preventDefault()
-
-            var name = $('#newFriendName').val();
-            var sluggedName = getSlug(name);
-            var randNum = Math.floor(Math.random()*1000)
-            var generatedSlug = `${sluggedName}${randNum}`;
-
-            let result = {
-                'title':$('#newFriendName').val(),
-                'bio':$('#newFriendBio').val(),
-                'summary':$('#newFriendSummary').val(),
-                'headline':$('#newFriendHeadline').val(),
-                'slug':generatedSlug,
-                'statusId':1,
-                'primaryImage':$('#newFriendAvatar').val()
-            }
-
-            return addFriend(result)
-            .then(onAddFriendSuccess)
-            .catch(onAddFriendError)
-        }
-        function onAddFriendSuccess(){
-            toastr['success']('Friend added!')
-
-            window.location.replace('Friends.html')
-                
-
 
         }
-        function onAddFriendError(){
-            toastr['error']('Something went wrong. Please check your data and try again!')
-        }  
+
         //UPDATE FRIEND FUNCTION BLOCK
-        function editFriend(e){
-            $('.hideOnEdit').addClass('d-none');
-            $('#editFormContainer').toggleClass('d-none');
-            var thisCardId = $(this).closest('.card').attr('data-friend-id')
-            
-            return getFriend(thisCardId)
-                .then(onGetFriendSuccess)
-                .catch(onGetFriendError)
+        function editFriend(e) {
+            e.preventDefault();
+            var editId = $(this).closest('.card').attr('data-friend-id');
+
+            window.location.replace(`AddEditFriends.html?id=${editId}`)
         }
-        function onGetFriendSuccess(data){
+        function onGetFriendSuccess(data) {
             var person = data.data.item
             var updateId = person.id
             $('#editName').val(person.title);
@@ -342,37 +282,37 @@
             $('#slugBox').text(person.slug)
             return;
         }
-        function onGetFriendError(){
+        function onGetFriendError() {
             toastr['error']('Something went wrong. Please try again.')
         }
-        function sendUpdate(e){
+        function sendUpdate(e) {
             e.preventDefault();
             let id = Number($('#idBox').text())
             let result = {
-                'id':id,
-                'title':$('#editName').val(),
-                'bio':$('#editBio').val(),
-                'summary':$('#editSummary').val(),
-                'headline':$('#editSummary').val(),
-                'slug':$('#slugBox').text(),
-                'statusId':1,
-                'primaryImage':$('#editAvatar').val()
+                'id': id,
+                'title': $('#editName').val(),
+                'bio': $('#editBio').val(),
+                'summary': $('#editSummary').val(),
+                'headline': $('#editSummary').val(),
+                'slug': $('#slugBox').text(),
+                'statusId': 1,
+                'primaryImage': $('#editAvatar').val()
             }
-            return updateFriend(id,result)
+            return updateFriend(id, result)
                 .then(onUpdateSuccess)
                 .catch(onUpdateError)
         }
-        function onUpdateSuccess(){
+        function onUpdateSuccess() {
             toastr['success']('Friend updated!')
             toastr['info']('You will now be redirected to your Friends page.')
 
-            setTimeout(redirectUser,3000)
-             function redirectUser(){
+            setTimeout(redirectUser, 3000)
+            function redirectUser() {
                 window.location.replace('Friends.html')
-             }
+            }
         }
-        function onUpdateError(){}
-       //RENDER FRIENDS FUNCTION BLOCK
+        function onUpdateError() { }
+        //RENDER FRIENDS FUNCTION BLOCK
         function getTemplate() {
 
             var htmlFromCloneTarget = $('#cardTemplate').html();
@@ -391,10 +331,11 @@
 
             template.find('.card-title').text(friendName);
             template.find('.card-text').text(friendSummary)
-            
+
             avatar.attr('src', friend.primaryImage.imageUrl)
             avatar.attr('alt', friend.headline)
             template.attr('data-friend-Id', friend.id)
+            template.attr('data-slug', friend.slug)
 
             return template;
         }
@@ -431,10 +372,10 @@
 
     <script type='text/html' id='cardTemplate'>
 
-                  <div class="card border-info" >
-                    <img src="${primaryImage.imageUrl}" class="card-img-top img-thumbnail " alt="${title}">
+                  <div class="card border-info" style='background-color:#bbd8f775'>
+                    <img style='background-color:#bbd8f775' src="${primaryImage.imageUrl}" class="card-img-top img-thumbnail " alt="${title}">
                     <div class="card-body">
-                      <h5 class="card-title">${Title}</h5>
+                      <h5 class="card-title" style='font-family:serif'>${Title}</h5>
                       <p class="card-text">${Summary}</p>
                     </div>
                     <div class='container'> 

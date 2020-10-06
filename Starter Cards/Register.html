@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    
+
     <!-- #region Sabio Code - You can Fold this region to remove it from sight -->
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
@@ -19,7 +19,7 @@
     <script src="services/userServices.js"></script>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js'></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.css" rel='stylesheet'>
-    
+
 
     <!-- #endregion -->
     <!-- I 💘 Code, You 💘 Code, We all 💘 Code -->
@@ -39,6 +39,8 @@
 </head>
 
 <body class="sabio" data-ins="pw-00">
+
+
     <!-- Do Not Edit or Remove this nav element -->
     <nav class="do-not-remove navbar d-none navbar-expand-md navbar-dark bg-dark sabio"></nav>
 
@@ -70,11 +72,11 @@
         <form>
             <div class='form-group col-6'>
                 <label for='firstName'>First Name</label>
-                <input type='text' class='form-control' id='firstName'>
+                <input type='text' class='form-control' id='firstName' placeholder="At least 2 characters">
             </div>
             <div class='form-group col-6'>
                 <label for='lastName'>Last Name</label>
-                <input type='text' class='form-control' id='lastName'>
+                <input type='text' class='form-control' id='lastName' placeholder="At least 2 characters">
             </div>
             <div class='form-group col-6'>
                 <label for='email'>Email</label>
@@ -89,13 +91,13 @@
                 <input type='password' class='form-control' id='passwordConfirm'>
             </div>
             <div class='form-group col-6'>
-                <label for='avatar'>Avatar</label>
+                <label for='avatar'>Avatar Url</label>
                 <input type='link' class='form-control' id='avatar'>
             </div>
             <button type='submit' class='btn btn-primary' id='submitButton'>Submit</button>
-            <a href='Login.html' class='btn btn-primary'>Login</a> 
+            <a href='Login.html' class='btn btn-primary'>Login</a>
         </form>
-    </div>>
+    </div>
 
 
     <!-- Do Not Edit or Remove this footer element -->
@@ -113,15 +115,10 @@
         }
         function submitForm(e) {
             e.preventDefault();
-            //Read the form
-            //create an object from form values for the AJAX call
-            //make the call passing in the created object
-            //check that Password & Password Confirm match
-            //throw error/alert if not
             var payload = createUserObject();
             registerUser(payload)
-            .then(onRegisterSuccess)
-            .catch(onRegisterError)
+                .then(onRegisterSuccess)
+                .catch(onRegisterError)
 
         }
 
@@ -140,24 +137,35 @@
 
         function onRegisterSuccess() {
             logIn({
-                email:$('#userEmail').val(),
-                password:$('#password').val(),
-                tenantId:"U012YNYNGAW"
+                email: $('#userEmail').val(),
+                password: $('#password').val(),
+                tenantId: "U012YNYNGAW"
             }).then(onLoginSuccess).catch(onLoginError)
         };
         function onRegisterError(response) {
-            
-            return toastr['error'](response)
-            
+            var errors = response.response.data.errors;
+            var errorArr = [];
+            for (let index = 0; index < errors.length; index++) {
+                const currentError = errors[index];
+
+
+                if (currentError.includes('must be')) {
+
+                }
+                else { errorArr.push(`<p>&bull;${currentError}</p>`) }
+            }
+
+            return toastr['error'](errorArr)
+
         }
 
-        function onLoginSuccess(){
+        function onLoginSuccess() {
             window.location.replace('Home.html')
         }
-        function onLoginError(){
+        function onLoginError() {
             return;
         }
-        
+
 
 
     </script>

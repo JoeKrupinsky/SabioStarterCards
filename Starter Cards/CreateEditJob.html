@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- #region Sabio Code - You can Fold this region to remove it from sight -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="Sabio Coding Bootcamp" />
+    <meta itemprop="image" content="https://sabio.la/Sabio.png">
+    <link rel="shortcut icon" href="https://sabio.la/Sabio.png">
+    <link rel="icon" type="image/png" href="https://sabio.la/Sabio.png" />
+
+
+    <!-- Do Not Change the HTML title or anything between this line and the line with the 💘's -->
+    <title>PW Execise Template</title>
+    <link href="https://pw.sabio.la/dist/all-site.css" rel="stylesheet" />
+    <script src="https://pw.sabio.la/api/js/site"></script>
+    <script src="https://unpkg.com/axios@0.19.2/dist/axios.min.js"></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js'></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.css" rel='stylesheet'>
+    <script src="services/jobServices.js"></script>
+
+    <!-- #endregion -->
+    <!-- I 💘 Code, You 💘 Code, We all 💘 Code -->
+
+    <!-- 💡 All your CSS in here -->
+    <style>
+        form {
+            margin-top: 25px;
+            color: #406ce896;
+            box-shadow: -6px 4px 10px 1px #445988;
+            background-color: aliceblue;
+
+        }
+
+        footer {
+            margin-top: 100%;
+        }
+
+
+
+        #searchTools {
+            margin-top: 15px;
+            margin-bottom: 10px;
+            margin-left: 5px;
+
+        }
+
+        #backButton {
+            margin-left: 15px;
+        }
+
+        #searchButton {
+            margin-left: 3px;
+        }
+
+        #updateButton {
+            margin-left: 15px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+
+<body class="sabio" data-ins="pw-00">
+    <nav class="do-not-remove navbar d-none navbar-expand-md navbar-dark bg-dark sabio"></nav>
+
+    <ul class='nav nav-tabs'>
+
+        <li class='nav-item'>
+            <a class='nav-link' href='Home.html'>Home</a>
+        </li>
+        <li class='nav-item'>
+            <a class='nav-link' href='Friends.html'>Friends</a>
+        </li>
+        <li class='nav-item'>
+            <a class='nav-link' href='Blogs.html'>Blogs</a>
+        </li>
+        <li class='nav-item'>
+            <a class='nav-link' href='Companies.html'>Tech Companies</a>
+        </li>
+        <li class='nav-item'>
+            <a class='nav-link active' href='Jobs.html'>Jobs</a>
+        </li>
+        <li class='nav-item'>
+            <a class='nav-link' href='Events.html'>Events</a>
+        </li>
+        <li class='nav-item'>
+            <a class='nav-link' href='Register.html'>Register</a>
+        </li>
+    </ul>
+
+    <div class='container'>
+        <div class='row' id='searchTools'>
+            <input type='text' id='searchBox' placeHolder='Find a job...'>
+            <button type='submit' class='btn btn-primary' id='searchButton'>Search</button>
+            <button type='submit' class='btn btn-outline-primary' id='backButton'>Back to Jobs</button>
+        </div>
+    </div>
+
+    <div class='container' id='formContainer'>
+        <form id='addForm'>
+            <div class='form-group col-6'>
+                <label for='jobId'>Company Id</label>
+                <input type='text' class='form-control' id='jobId'>
+            </div>
+            <div class='form-group col-6'>
+                <label for='jobTitle'>Position</label>
+                <input type='text' class='form-control' id='jobTitle'>
+            </div>
+            <div class='form-group col-6'>
+                <label for='jobDescription'>Description</label>
+                <input type='text' class='form-control' id='jobDescription'>
+            </div>
+            <div class='form-group col-6'>
+                <label for='jobSummary'>Summary</label>
+                <input type='text' class='form-control' id='jobSummary'>
+            </div>
+            <div class='form-group col-6'>
+                <label for='jobSalary'>Salary</label>
+                <input type='text' class='form-control' id='jobSalary'>
+            </div>
+            <div class='form-group col-6'>
+                <label for='jobSkills'>Required Skills (comma-separated)</label>
+                <input type='text' class='form-control' id='jobSkills'>
+            </div>
+            <button type='submit' class='btn btn-primary d-none' id='submitButton'>Submit</button>
+            <button type='submit' class='btn btn-warning d-none' id='updateButton'>Update</button>
+
+        </form>
+    </div>
+
+    <!-- Do Not Edit or Remove this footer element -->
+    <footer class="do-not-remove container-fluid footer mx-auto  fb-targert sabio">
+        <p class="text-center">© Sabio.la 2019</p>
+    </footer>
+
+    <!--👇🏻 All your JavaScript code goes below here inside this script tag 👇🏻 -->
+    <script id="candidateCode">
+        function startUp() {
+            wireUpHandlers();
+            checkEdit();
+        }
+        function wireUpHandlers() {
+            $('#submitButton').on('click', createJob);
+            $('#updateButton').on('click', pushJobUpdate);
+            $('#searchButton').on('click', sendSearchResults);
+            $('#backButton').on('click', function () { window.location.replace('Jobs.html') })
+        };
+
+        function sendSearchResults(e) {
+            e.preventDefault();
+
+            var searchString = $('#searchBox').val();
+            window.location.replace(`JobsSearch.html?searchString=${searchString}`)
+        }
+        function getFormData() {
+
+            if (!window.location.search) {
+                let payload = {};
+                payload.title = $('#jobTitle').val();
+                payload.description = $('#jobDescription').val();
+                payload.summary = $('#jobSummary').val();
+                payload.pay = $('#jobSalary').val();
+                payload.slug = getSlug();
+                payload.statusId = 1;
+                payload.techCompanyId = $('#jobId').val();
+                payload.skills = getSkills();
+
+                return payload
+            }
+            else {
+                let payload = {};
+                payload.title = $('#jobTitle').val();
+                payload.description = $('#jobDescription').val();
+                payload.summary = $('#jobSummary').val();
+                payload.pay = $('#jobSalary').val();
+                payload.slug = $('#addForm').attr('data-slug');
+                payload.statusId = 1;
+                payload.techCompanyId = $('#jobId').val();
+                payload.skills = getSkills();
+
+                return payload
+            }
+        }
+
+        function createJob(e) {
+            e.preventDefault();
+
+            let data = getFormData();
+            return addJob(data)
+                .then(onAddJobSuccess)
+                .catch(onAddJobError)
+        }
+        function editJob() {
+
+            var editId = window.location.search.split('=')[1];
+            getJobById(editId)
+                .then(onFillSuccess)
+                .catch(onFillError)
+        }
+
+        function pushJobUpdate(e) {
+            e.preventDefault();
+
+            var payload = getFormData();
+            var jobId = $('#addForm').attr('data-id')
+            return updateJob(jobId, payload)
+                .then(onUpdateSuccess)
+                .catch(onUpdateError)
+        }
+
+        function onUpdateSuccess() {
+            toastr['success']('Job updated! Redirecting to Jobs...');
+            setTimeout(function () {
+                window.location.replace('Jobs.html')
+            }, 3000)
+        }
+        function onUpdateError(response) {
+            console.log(response.response.data)
+        }
+        function onFillSuccess(response) {
+            var fillData = response.data.item;
+            var skills = fillData.skills;
+            console.log(skills)
+
+            $('#jobId').val(fillData.techCompany.id);
+            $('#jobTitle').val(fillData.title);
+            $('#jobDescription').val(fillData.description);
+            $('#jobSummary').val(fillData.summary);
+            $('#jobSalary').val(fillData.pay);
+            $('#jobSkills').val(formatSkills(skills))
+            var fillSlug = fillData.slug
+            var jobId = window.location.search.split('=')[1]
+            $('#addForm').attr('data-id', jobId)
+            $('#addForm').attr('data-slug', fillSlug);
+        }
+        function formatSkills(skills) {
+            var formattedSkills = [];
+
+            for (let index = 0; index < skills.length; index++) {
+                const currentSkill = skills[index];
+                console.log(currentSkill.name)
+                formattedSkills.push(currentSkill.name);
+            }
+
+            return formattedSkills.join(',')
+
+        }
+        function onFillError(response) { }
+
+        function onAddJobSuccess(response) {
+            var createdJobId = response.data.item;
+            window.location.replace(`CreateEditJob.html?edit=${createdJobId}`)
+            // changeButton();
+            // return toastr['success']('Job created.')
+
+        }
+        function changeButton() {
+            $('#submitButton').addClass('d-none')
+            $('#updateButton').removeClass('d-none')
+        }
+
+        function onAddJobError(response) {
+            var errors = response.response.data.errors;
+            var errorArr = [];
+
+            if (errors[0].includes('Could not convert string to integer') || $('#jobId').val() === '') {
+                errorArr = 'Please submit a valid Company Id';
+            } else {
+
+                for (let index = 0; index < errors.length; index++) {
+                    const currentError = errors[index];
+
+
+                    if (currentError.includes('must be')) {
+
+                    }
+                    else { errorArr.push(`<p>&bull;${currentError}</p>`) }
+                }
+            }
+
+            return toastr['error'](errorArr)
+        }
+
+        function getSkills() {
+            let skillsArr = $('#jobSkills').val().split(',');
+            return skillsArr;
+        }
+
+
+
+        function getSlug() {
+            let firstLetter = $('#jobTitle').val().slice(0, 1).toLowerCase();
+            let randNum = Math.floor(Math.random() * 10000);
+            let slug = `${firstLetter}${randNum}`;
+            return slug;
+        }
+
+        function checkEdit() {
+            if (window.location.search) {
+                //Edit page from redirect. Show Update button to edit job
+                $('#updateButton').toggleClass('d-none')
+                editJob();
+            } else {
+                //Page not redirected. Show Submit button to add job
+                $('#submitButton').toggleClass('d-none');
+
+            }
+        }
+
+    </script>
+    <!-- 🛑 Do Not Write Any Code Below here -->
+</body>
+
+</html>

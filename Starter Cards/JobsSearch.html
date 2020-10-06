@@ -14,8 +14,6 @@
     <link href="https://pw.sabio.la/dist/all-site.css" rel="stylesheet" />
     <script src="https://pw.sabio.la/api/js/site"></script>
     <script src="https://unpkg.com/axios@0.19.2/dist/axios.min.js"></script>
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js'></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.css" rel='stylesheet'>
     <script src="services/jobServices.js"></script>
 
     <!-- #endregion -->
@@ -60,7 +58,7 @@
 
 <body class="sabio" data-ins="pw-00">
     <!-- Do Not Edit or Remove this nav element -->
-    <nav class="do-not-remove navbar d-none navbar-expand-md navbar-dark bg-dark sabio"></nav>
+    <nav class="do-not-remove navbar navbar-expand-md navbar-dark d-none bg-dark sabio"></nav>
 
     <ul class='nav nav-tabs'>
 
@@ -87,8 +85,6 @@
         </li>
     </ul>
 
-
-
     <div class='container'>
         <div class='row' id='searchTools'>
             <input type='text' id='searchBox' placeHolder='Find a job...'>
@@ -99,10 +95,11 @@
         <div class='row' id='cardContainer'>
 
         </div>
-        <div class='container' id='modalContainer'>
+        <div class='container' id='modalSearchContainer'>
 
         </div>
     </div>
+
     <!-- Do Not Edit or Remove this footer element -->
     <footer class="do-not-remove container-fluid footer mx-auto  fb-targert sabio">
         <p class="text-center">© Sabio.la 2019</p>
@@ -111,40 +108,50 @@
     <!--👇🏻 All your JavaScript code goes below here inside this script tag 👇🏻 -->
     <script id="candidateCode">
         function startUp() {
+            getSearchString();
             wireUpHandlers();
-            getJobs(0, 10)
-                .then(onGetJobsSuccess)
-                .then(renderJobs)
-                .then(renderModals)
-                .catch(onGetJobsError)
+
         }
-        //GET JOB ON LOAD CALLBACKS
-        function onGetJobsSuccess(response) {
-            var jobs = response.data.item.pagedItems;
-            return jobs;
-        }
-        function onGetJobsError(response) {
-            console.log('Error retrieving jobs')
-        }
-        //BUTTON HANDLERS
         function wireUpHandlers() {
-            $('#cardContainer').on('click', 'button.editButton', onEditJobClicked)
-            $('#cardContainer').on('click', 'button.deleteButton', onDeleteJobClicked)
-            $('#addButton').on('click', goToAddForm)
-            $('#searchButton').on('click', sendSearchResults)
-        }
-        //SEARCH FUNCTIONS
+            $('#addButton').on('click', function () { window.location.replace('CreateEditJob.html') });
+            $('#searchButton').on('click', sendSearchResults);
+            $('#cardContainer').on('click', 'button.editButton', onEditJobClicked);
+            $('#cardContainer').on('click', 'button.deleteButton', onDeleteJobClicked);
+        };
+
         function sendSearchResults(e) {
             e.preventDefault();
+
             var searchString = $('#searchBox').val();
             window.location.replace(`JobsSearch.html?searchString=${searchString}`)
         }
-        //RENDER JOBS
-        function getTemplate() {
-            var htmlFromCloneTarget = $('#jobCardTemplate').html();
-            var jQ = $(htmlFromCloneTarget);
-            jQ.removeAttr("id");
-            return jQ;
+        function getSearchString() {
+            var string = window.location.search.split('=')[1];
+            findJob(string)
+                .then(onFindJobSuccess)
+                .then(renderJobs)
+                .then(renderModals)
+                .catch(onFindJobError)
+        }
+        function onFindJobSuccess(response) {
+            var foundJobs = response.data.item.pagedItems;
+            return foundJobs;
+        };
+        function onFindJobError(response) {
+            $('#cardContainer').append(`<div class='jumbotron'>Nothing found. Sorry about that!</div>`)
+        }
+
+        function getImage() {
+            var imageArr =
+                ["./placeholderImages/www.scatterjar.com-0262-1-scaled.jpg",
+                    "./placeholderImages/www.scatterjar.com-0660-scaled.jpg",
+                    "./placeholderImages/www.scatterjar.com-0901-scaled.jpg",
+                    "./placeholderImages/www.scatterjar.com-1328-2-scaled.jpg",
+                    "./placeholderImages/www.scatterjar.com-1551-1-scaled.jpg",
+                    "./placeholderImages/www.scatterjar.com-3400-scaled.jpg"]
+            var randIndex = Math.floor(Math.random() * 6);
+
+            return imageArr[randIndex];
         }
         function mapJob(job) {
             var template = getTemplate();
@@ -158,18 +165,19 @@
             template.find('.job-salary').text(`$${jobSalary}`);
             template.find('.job-title').text(jobPosition);
             template.find('.job-contact').text(jobContact);
-            template.find('.job-skills').html(`Required Skills:</br>${jobSkills}`)
+            template.find('.job-skills').html(`Required Skills:</br>${jobSkills}`);
             template.find('.modal-button').attr('data-target', `#modal-${jobId}`)
 
             jobPic.attr('src', getImage())
             jobPic.attr('alt', job.techCompany.name)
             template.attr('data-job-id', job.id);
             template.attr('data-company-id', job.techCompany.id)
+
             return template;
         }
         function renderJobs(arrayOfData) {
             //mapSingleItem is missing. you need to write that function
-            var arrayofJqTemplates = arrayOfData.map(mapJob);
+            let arrayofJqTemplates = arrayOfData.map(mapJob);
             $("#cardContainer").append(arrayofJqTemplates);
             return arrayOfData;
         }
@@ -178,55 +186,23 @@
 
             for (let index = 0; index < skills.length; index++) {
                 const currentSkill = skills[index];
+
                 formattedSkills.push(currentSkill.name);
             }
-            return formattedSkills.join(', ')
-        }
-        function getImage() {
-            var imageArr =
-                ["./placeholderImages/www.scatterjar.com-0262-1-scaled.jpg",
-                    "./placeholderImages/www.scatterjar.com-0660-scaled.jpg",
-                    "./placeholderImages/www.scatterjar.com-0901-scaled.jpg",
-                    "./placeholderImages/www.scatterjar.com-1328-2-scaled.jpg",
-                    "./placeholderImages/www.scatterjar.com-1551-1-scaled.jpg",
-                    "./placeholderImages/www.scatterjar.com-3400-scaled.jpg"]
-            var randIndex = Math.floor(Math.random() * 6);
-            return imageArr[randIndex];
-        }
 
-        //MODAL CREATION FUNCTIONS
-        function getModalTemplate() {
-            var htmlFromCloneTarget = $('#jobModalTemplate').html();
+            return formattedSkills.join(' ')
+
+        }
+        function getTemplate() {
+
+            var htmlFromCloneTarget = $('#jobCardTemplate').html();
             var jQ = $(htmlFromCloneTarget);
-            console.log(jQ)
+
+            jQ.removeAttr("id");
+
             return jQ;
         }
-        function mapModal(job) {
-            var modalTemplate = getModalTemplate();
-            // console.log(modalTemplate);
-            var jobPosition = job.title;
-            var jobSummary = job.summary;
-            var jobDescription = job.description;
 
-            var modalClassId = `modal-${job.id}`;
-            // console.log(modalClassId)
-
-            modalTemplate.find('.modal-title').text(jobPosition);
-            modalTemplate.find('.modal-info-summary').text(jobSummary);
-            modalTemplate.find('.modal-info-description').text(jobDescription);
-            modalTemplate.attr('id', modalClassId)
-            return modalTemplate;
-        }
-
-        function renderModals(arrayOfData) {
-            let arrayofJqTemplates = arrayOfData.map(mapModal);
-            $("#modalContainer").append(arrayofJqTemplates);
-        }
-        // ADD A JOB BUTTON FUNCTION
-        function goToAddForm() {
-            window.location.replace('CreateEditJob.html')
-        }
-        //DELETE BUTTON FUNCTIONS
         function onDeleteJobClicked(e) {
             e.preventDefault();
             var thisJob = $(this).closest('.card');
@@ -241,7 +217,6 @@
         function onJobDeleteError(response) {
             console.log(response.response)
         }
-        //EDIT BUTTON FUNCTIONS
         function onEditJobClicked(e) {
             e.preventDefault();
             var editId = $(this).closest('.card').attr('data-job-id');
@@ -250,27 +225,61 @@
 
         }
 
+        //MODAL STUFF
+        function getModalTemplate() {
+            var htmlFromCloneTarget = $('#jobModalTemplate').html();
+            console.log(htmlFromCloneTarget)
+            var jQ = $(htmlFromCloneTarget);
+            // console.log(jQ)
+            return jQ;
+        }
+        function mapModal(job) {
+
+            var modalTemplate = getModalTemplate();
+            // console.log(modalTemplate);
+            var jobPosition = job.title;
+            var jobSummary = job.summary;
+            var jobDescription = job.description;
+
+            var modalClassId = `modal-${job.id}`;
+            // console.log(modalClassId)
+
+            modalTemplate.find('.modal-title').text(jobPosition);
+            modalTemplate.find('.modal-info-summary').text(jobSummary);
+            modalTemplate.find('.modal-info-description').text(jobDescription);
+            modalTemplate.attr('id', modalClassId)
+            // console.log(modalTemplate)
+            return modalTemplate;
+        }
+        function renderModals(arrayOfData) {
+            // console.log(arrayOfData)
+            // console.log('render modals makes it to map')
+            let arrayofJqTemplates = arrayOfData.map(mapModal);
+            // console.log('render modals makes it to append')
+            $("#modalSearchContainer").append(arrayofJqTemplates);
+        }
 
     </script>
 
     <script type='text/html' id='jobCardTemplate'>
-            <div class="card col-3" style='background-color:#305169e0; color:#525252e6; box-shadow: -7px 11px 12px 0px grey;'>
-                <img src="" class="card-img-top" alt="...">
-                <div class="card-body">
-                    <h2 class="card-title job-salary" style='color:white;font-size:3em;font-family:none;text-shadow: -2px 2px 6px black'></h2>
-                    <h4 class="card-title job-title" style='color:black;font-family:serif;'></h4>
-                    <p class="card-text job-contact"style='color:white;'></p>
-                    <h6 class='job-skills'style='color:white'></h6>
-                </div>
-                <div class="card-body">
-                    <button class='btn btn-primary editButton' style='color:black'>Edit</button>
-                    <button class='btn btn-danger deleteButton' style='color:black'>Delete</button>
-                    <button type="button" class="btn btn-dark modal-button" data-toggle="modal" data-target="">
-                        View more...
-                    </button>
-                </div>
+        <div class="card col-3" style='background-color:#305169e0; color:#525252e6; box-shadow: -7px 11px 12px 0px grey;'>
+            <img src="" class="card-img-top" alt="...">
+            <div class="card-body">
+                <h2 class="card-title job-salary" style='color:white;font-size:2em;font-family:none;text-shadow: -2px 2px 6px black'></h2>
+                <h4 class="card-title job-title" style='color:black;font-family:serif;'></h4>
+                <p class="card-text job-contact"style='color:white;'></p>
+                <h6 class='job-skills'style='color:white'></h6>
             </div>
-        </script>
+            <div class="card-body">
+                <button class='btn btn-primary editButton' style='color:black'>Edit</button>
+                <button class='btn btn-danger deleteButton' style='color:black'>Delete</button>
+                <button type="button" class="btn btn-dark modal-button" data-toggle="modal" data-target="">
+                    View more...
+                </button>
+            </div>
+        </div>
+        
+    </script>
     <script type='text/html' id='jobModalTemplate'>
         <div class="modal fade modal-shell" tabindex="-1" aria-labelledby="jobModal"
                 aria-hidden="true">
